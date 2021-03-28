@@ -1,1 +1,4 @@
-### Activity Report: **Week 1**
+# Bogazici University Software Engineering Department
+This is where I share my researches, studies and assignments for the course.
+Enjoy :clinking_glasses:
+
