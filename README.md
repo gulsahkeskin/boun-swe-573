@@ -1,2 +1,1 @@
-# SWE573
-## Project repo
+### Activity Report: **Week 1**
