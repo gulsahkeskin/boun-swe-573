@@ -1,0 +1,25 @@
+{% extends 'tagapp/base.html' %}
+{% load static %}
+{% block content %}
+
+    <h1>Search page</h1>
+
+    <!-- Load icon library -->
+{#<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">#}
+<div class="position-relative">
+    <img src="{% static 'tagapp/orange-lotus.png' %}" width="120" height="120" class="d-inline-block align-top">
+
+</div>
+
+    <div class="row justify-content-center mt-5">
+
+<!-- The form -->
+<form class="form-inline mr-sm-0, my-lg-0">
+  <input class="form-control mr-sm-0" type="search" placeholder="Search" aria-label="Search" style="width:575px;">
+  <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+</form>
+
+    </div>
+
+
+{% endblock %}

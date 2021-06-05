@@ -1,0 +1,32 @@
+{% extends 'tagapp/base.html' %}
+
+{% block content %}
+
+    <h1>Sign Up</h1>
+
+    {% if error %}
+        <div class="col-md-5">
+        <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endif %}
+
+
+    <form method="POST">
+    {% csrf_token %}
+    {% for field in form %}
+        {{ field.label }}
+        {{ field }}
+        <br><br>
+    {% endfor %}
+
+        <div>
+        <button type="submit" class="btn btn-outline-success">Sign Up</button>
+        Already have an account? <a href="{% url 'loginuser' %}">Login</a>
+        </div>
+
+</form>
+
+{% endblock %}
+
+
