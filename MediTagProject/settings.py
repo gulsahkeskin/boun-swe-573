@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'MediTagProject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'gulsahdb',
+        'NAME': 'projectpostgres',
         'USER':  'postgres',
         'PASSWORD': 'G000520k',
         'HOST': 'localhost',

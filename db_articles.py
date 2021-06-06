@@ -89,7 +89,7 @@ def save_db():
             pass
 
 
-save_db()
+# save_db()
 
 # with open("articles.json", 'r') as fp:
 #     articles = json.load(fp)

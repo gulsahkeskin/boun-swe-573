@@ -24,22 +24,23 @@ class RelatedKeywords(models.Model):
     related_keywords = models.CharField(max_length=300,  null=True)
 
     def __str__(self):
-        return self.related_keywords
+        return self.related_keywords or ''
 
 
 class Article(models.Model):
     pm_id = models.CharField(max_length=16)
-    journal_title = models.CharField(max_length=256)
-    article_title = models.TextField(max_length=500)
+    journal_title = models.CharField(max_length=255)
+    article_title = models.TextField(max_length=511)
     authors = models.ManyToManyField(Author)
     abstract = models.TextField(null=True, blank=True)
     publication_date = models.DateField(null=True)
     keyword = models.CharField(max_length=300)
     related_keywords = models.ManyToManyField(RelatedKeywords)
+    # related_keywords = models.CharField(max_length=255, null=True)
     # tags = models.ManyToManyField(Tag)
 
     def __str__(self):
-        return self.article_title
+        return self.article_title or ''
 
 
 class Tag(models.Model):
