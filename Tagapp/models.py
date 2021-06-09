@@ -45,9 +45,11 @@ class Article(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(max_length=50)
-    description = models.TextField(max_length=500, null=True)
+    wiki_id = models.CharField(max_length=64, null=True)
+    description = models.TextField(max_length=1000, null=True)
     search = SearchVectorField(null=True)
-    wikidata_url = models.URLField(null=True)
+    # wikidata_url = models.URLField(null=True)
+    aliases = models.TextField(max_length=1000, null=True)
 
 
 
