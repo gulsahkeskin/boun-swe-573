@@ -1,0 +1,28 @@
+{% extends 'tagapp/base.html' %}
+
+{% block content %}
+    <div style="text-align: left;">
+    {% if articles %}
+        <ul>
+            {% for article in articles %}
+
+            <li>
+                {{ article.journal_title }}<br>
+                {{ article.article_title }}<br>
+                {{ article.abstract }}<br>
+                {{ article.publication_date }}<br>
+                {{ article.related_keywords }}
+            </li>
+
+                {% empty %}
+                no answer
+            {% endfor %}
+            </ul>
+    {% else %}
+        <h1>you forgot to search!</h1>
+{% endif %}
+
+    </div>
+
+{% endblock %}
+

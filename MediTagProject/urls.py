@@ -27,6 +27,7 @@ urlpatterns = [
 
     #Tagapp
     path('', views.home, name='home'),
-    path('search/', views.search, name='search')
+    path('search/', views.search, name='search'),
+    path('search_results/', views.search_results, name='search_results')
 
 ]

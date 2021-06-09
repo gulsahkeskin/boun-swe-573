@@ -34,10 +34,10 @@ class Article(models.Model):
     authors = models.ManyToManyField(Author)
     abstract = models.TextField(null=True, blank=True)
     publication_date = models.DateField(null=True)
-    keyword = models.CharField(max_length=300)
+    keyword = models.CharField(max_length=300, default='')
     related_keywords = models.ManyToManyField(RelatedKeywords)
     # related_keywords = models.CharField(max_length=255, null=True)
-    # tags = models.ManyToManyField(Tag)
+    tags = models.CharField(max_length=255, null=True)
 
     def __str__(self):
         return self.article_title or ''

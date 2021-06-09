@@ -14,12 +14,42 @@
     <div class="row justify-content-center mt-5">
 
 <!-- The form -->
-<form class="form-inline mr-sm-0, my-lg-0">
-  <input class="form-control mr-sm-0" type="search" placeholder="Search" aria-label="Search" style="width:575px;">
-  <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+<form class="form-inline mr-sm-0, my-lg-0" method="POST">
+    {% csrf_token %}
+  <input class="form-control mr-sm-0" type="text" name="searched" placeholder="Search articles" aria-label="Search" style="width:575px;">
+  <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit" name="submit">Search</button>
 </form>
 
     </div>
 
+    {% comment %}{% if submitbutton == 'Search' and request.GET.q != '' %}
+        {% if results %}
+            <h1>Results for <b>{{ request.GET.q }}</b></h1>
+            <br/><br/>
 
+            {% for result in results %}
+
+                {{ result.journal_title }}
+                <br/>
+
+                {{ result.article_title }}
+
+                <br>
+
+                {{ result.publication_date }}
+                <br/>
+
+                {{ result.authors }}
+                <br/>
+
+                {{ result.abstract }}
+
+
+
+            {% endfor %}
+        {% else %}
+            No search results for this query
+        {% endif %}
+    {% endif %}
+{% endcomment %}
 {% endblock %}
