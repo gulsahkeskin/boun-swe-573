@@ -76,6 +76,9 @@ def save_db():
 
         try:
             article.save()
+
+            article.search_vector()
+
             if author_list:
                 article.authors.add(*author_list)
             if keyword_list:

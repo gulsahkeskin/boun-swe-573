@@ -77,13 +77,14 @@ def search(request):
 
     if request.method == "POST":
         searched = request.POST.get('searched')
+        if searched:
         # articles = Article.objects.filter(SearchQuery('article_title'))
         # if searched:
         # print(searched)
-        articles = Article.objects.filter(Q(article_title__icontains='searched')).distinct()
+            articles = Article.objects.filter(Q(article_title__icontains=searched)).distinct()
         # print(len(articles))
 
-        return render(request, 'tagapp/search_results.html', context={'articles': articles})
+            return render(request, 'tagapp/search_results.html', context={'articles': articles})
 
         # return render(request, 'tagapp/search_results.html', {'searched': searched})
     else:
@@ -108,6 +109,8 @@ def search_results(request):
     return render(request, 'tagapp/search_results.html')
 
 
+def article_details(request):
+    return render(request, 'tagapp/article_details.html')
 
 
     # if request.method == 'GET':
