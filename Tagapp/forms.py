@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.forms import forms
+from django import forms
 from Tagapp.models import Tag
 
 
@@ -9,8 +9,10 @@ class CreateUserForm(UserCreationForm):
         model = User
         fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
 
-#
-# class TagForm(forms.Form):
-#     class Meta:
-#         name =
+
+class TagForm(forms.Form):
+    class Meta:
+        model = Tag
+
+
 

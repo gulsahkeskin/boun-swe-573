@@ -1,11 +1,13 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.http import Http404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from .models import Article
+from .models import Article, Tag, Author, RelatedKeywords
 from django.db.models import Q
+from .forms import TagForm
 from django.contrib.postgres.search import SearchQuery
 from django.core.paginator import Paginator
 
@@ -109,8 +111,22 @@ def search_results(request):
     return render(request, 'tagapp/search_results.html')
 
 
-def article_details(request):
-    return render(request, 'tagapp/article_details.html')
+def article_details(request, pk):
+    article = Article.objects.get(pk=pk)
+    authors = Author.objects.filter(article=article)
+    keywords = RelatedKeywords.objects.filter(article=article)
+    tags = Tag.objects.filter(article=article)
+    article_dict = {
+        "journal_title": article.journal_title,
+        "article_title": article.article_title,
+        "authors": authors,
+        "date": article.publication_date,
+        "abstract": article.abstract,
+        "keywords": keywords,
+        "doi": article.doi,
+        # "tags": tags
+    }
+    return render(request, 'tagapp/article_details.html', context=article_dict)
 
 
     # if request.method == 'GET':
@@ -128,3 +144,21 @@ def article_details(request):
     #
     #     else:
     #         return render(request, 'tagapp/search.html')
+
+@login_required
+def create_tag(request):
+    # if request.method == 'POST':
+        # if 'create_tag' in request.POST:
+        #     form = TagForm(data=request.POST)
+        #     if form.data['wiki_id']:
+        #         Article.Tag.add(newtag)
+
+    return render(request, 'tagapp/create_tag.html')
+
+
+@login_required
+def delete_tag(request, pk):
+    tag = get_object_or_404(Tag, pk=pk, user=request.user)
+    if request.method == 'POST':
+        tag.delete()
+        return redirect('article_details')

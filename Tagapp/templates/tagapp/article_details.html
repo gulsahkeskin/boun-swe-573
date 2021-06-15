@@ -1,11 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<p>Article detail page</p>
+{% extends 'tagapp/base.html' %}
 
-</body>
-</html>
+{% block content %}
+
+
+    <h6>Journal: {{ journal_title }}</h6>
+    <h6>DOI: {{ doi }}</h6>
+    <h6>Publication date: {{ date }}</h6>
+    <h5><strong>{{ article_title }}</strong></h5>
+    <h6>Authors: {{ authors }}</h6>
+    <h6><strong>Abstract:</strong></h6>
+    <p>{{ abstract }}</p>
+    <h6>Keywords: </h6>
+    <p>{{ keywords }}</p>
+
+
+<a class="btn btn-primary" href="/create_tag">Create tag</a>
+
+{% endblock %}

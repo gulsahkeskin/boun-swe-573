@@ -3,7 +3,7 @@ import os
 import pprint
 import requests
 from datetime import datetime
-from Tagapp.models import RelatedKeywords
+# from Tagapp.models import RelatedKeywords
 
 # from dotenv import load_dotenv, find_dotenv
 
@@ -34,9 +34,9 @@ class EntrezSearchRequest:
     base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
     # article_limit = 20
     # total_articles = 50000
-    total_articles = 5
+    total_articles = 50000
 
-    def __init__(self, keyword, article_limit=5):  # articld_limit = 200
+    def __init__(self, keyword, article_limit=200):  # articld_limit = 200
         self.keyword = keyword
         self.article_limit = article_limit
         self.error_log = open('parse_err_ids.log', 'a')
@@ -185,6 +185,21 @@ class EntrezSearchRequest:
     #             keywords_list = None
     #         return keywords_list
 
+    def parse_doi(self, doi_obj, pmid):
+        doi = ""
+        if type(doi_obj) == collections.abc.Mapping:
+            doi = doi_obj.get("#text", "")
+        elif type(doi_obj) == list:
+
+            for obj in doi_obj:
+                if obj.get("@EIdType") == "doi":
+                    doi = obj.get("#text", "")
+                    break
+        else:
+            self.error_log.write("Could not parse DOI. DOI type unknown. PMID: " + pmid)
+            doi = ""
+        return doi
+
     def parse_articles(self):
         for paper in self.article_list:
             # Retrieves Journal name
@@ -212,6 +227,9 @@ class EntrezSearchRequest:
             #                 keyword = RelatedKeywords.get_or_create(related_keywords=element)
             #                 keywords.append(keyword[0])
 
+            doi = paper.get("MedlineCitation").get("Article").get("ELocationID")
+            doi = self.parse_doi(doi, pm_id)
+
             keyword_list = paper.get("MedlineCitation").get("KeywordList", {}).get("Keyword", [])
             keywords = [keyword.get("#text") for keyword in keyword_list] if type(keyword_list) == list \
                 else [keyword_list]
@@ -219,9 +237,12 @@ class EntrezSearchRequest:
             authors = paper["MedlineCitation"]["Article"].get("AuthorList", {})
             author_obj = authors.get("Author", [])
             author_list = self.parse_authors(author_obj, pm_id)
+            # print(author_list, 24174890)
 
             date_obj = paper["MedlineCitation"]["Article"]["Journal"]["JournalIssue"]["PubDate"]
             date_published = self.parse_date(date_obj, pm_id)
+            if date_published is not None:
+                date_published = date_published.strftime("%d-%m-%Y")
             # print(date_obj)
             # print(type(date_published))
 
@@ -231,6 +252,7 @@ class EntrezSearchRequest:
                                     "Authors": author_list,
                                     "Abstract": abstract_text,
                                     "Publication Date": date_published,
+                                    "DOI": doi,
                                     "Keyword": self.keyword,
                                     "Related Keywords": keywords
                                     }
@@ -256,6 +278,6 @@ class EntrezSearchRequest:
         self.parse_articles()
 
 
-pubmed_request = EntrezSearchRequest(keyword, article_limit=2)
-pubmed_request.pipeline()
+# pubmed_request = EntrezSearchRequest(keyword, article_limit=200)
+# pubmed_request.pipeline()
 # pubmed_request.print()

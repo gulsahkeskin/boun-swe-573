@@ -10,7 +10,7 @@ from Tagapp.models import Article, Author, RelatedKeywords
 
 def fetch_articles():
     try:
-        with open("articles.json", 'r') as fp:
+        with open("articles_new.json", 'r') as fp:
             articles = json.load(fp)
             # print("Articles loaded from articles.json")
     except:
@@ -22,12 +22,12 @@ def fetch_articles():
             end_batch_time = time.time()
             time_elapsed = str(round(end_batch_time - start_batch_time, 2))
             batch_no = str(i // search_handle.article_limit + 1)
-            # print("Current batch [{}/{}] took {} seconds.".format(batch_no, total_batches, time_elapsed))
+            print("Current batch [{}/{}] took {} seconds.".format(batch_no, total_batches, time_elapsed))
         unique_ids = set()
         for article_id in search_handle.articles:
             unique_ids.add(article_id)
         search_handle.error_log.close()
-        with open("articles.json", 'w') as fp:
+        with open("articles_new.json", 'w') as fp:
             json.dump(search_handle.articles, fp)
         with open("article_ids.txt", 'w') as fp:
             for a in search_handle.article_ids:
@@ -42,10 +42,14 @@ def fetch_articles():
 def save_db():
     articles = fetch_articles()
     article_objects = []
-    article_ids = []
+    article_ids = set()
+    dbsave_log = open('dbsave.log', 'a')
+    dbsave_log.write("Database save started.\n")
+    article_ids_db = set(Article.objects.values_list('pm_id', flat=True))
     for p in articles:
-        article_ids.append(p)
-        authors = articles[p]['Authors']
+        start = time.time()
+        article_ids.add(p)
+        authors = articles[p]['Authors'].split(',')
         author_list = []
         related_keywords = articles[p]['Related Keywords']
         keyword_list = []
@@ -61,11 +65,10 @@ def save_db():
         # print(type(deneme))
         # print(deneme)
 
-        for date_format in ('%Y %b %d', '%Y %m %d'):
-            try:
-                date_article = datetime.strptime(articles[p]['Publication Date'], date_format)
-            except ValueError:
-                pass
+        try:
+            date_article = datetime.strptime(articles[p]['Publication Date'], '%d-%m-%Y')
+        except:
+            date_article = None
         article = Article(pm_id=p,
                           journal_title=articles[p]['Journal Title'],
                           article_title=articles[p]['Article Title'],
@@ -75,31 +78,43 @@ def save_db():
                           )
 
         try:
-            article.save()
+            if p not in article_ids_db:
+                article.save()
 
-            article.search_vector()
+                for a in author_list:
+                    article.authors.add(a)
+                for k in keyword_list:
+                    article.related_keywords.add(k)
+                article_ids_db.add(p)
+                dbsave_log.write("Article with pmid " + p + " successfully added.\n")
+            # article.search_vector()
 
-            if author_list:
-                article.authors.add(*author_list)
-            if keyword_list:
-                article.related_keywords.add(*keyword_list)
             # print("Article ", p, " saved.")
         except IntegrityError:
-            # print("Article ", p, "cannot be saved.")
-            pass
-        else:
-            # print("Article save failed.")
+            dbsave_log.write("Article " + p + " cannot be saved. Cause: Integrity Error\n")
             pass
 
-
+        finish = time.time()
+    dbsave_log.write("Done.\n")
 # save_db()
 
-# with open("articles.json", 'r') as fp:
-#     articles = json.load(fp)
-# with open("article_ids.txt", 'r') as fp:
-#     article_ids = fp.readlines()
-# articles = set(articles.keys())
-# article_ids = set([ids.strip('\n') for ids in article_ids])
-# id_diff = article_ids - articles
-# for diff in id_diff:
-#     print(diff)
+
+def save_doi():
+    articles = fetch_articles()
+    article_objs = Article.objects.all()
+    article_pmids = Article.objects.values_list('pm_id', flat=True)
+
+    for i, pmid in enumerate(article_pmids):
+        article_objs[i].doi = articles[pmid]["DOI"]
+        if (i+1) % 1000 == 0:
+            print(i, len(articles))
+    print("Started updating")
+    Article.objects.bulk_update(article_objs, ['doi'], batch_size=512)
+    print("Update done")
+    """
+    for p in articles:
+        pmid = articles[p]["PMID"]
+        doi = articles[p]["DOI"]
+        Article.objects.filter(pm_id=pmid).update(doi=doi)
+    """
+

@@ -22,18 +22,16 @@
             <th>Article title</th>
             <th>Publisher</th>
             <th>Date</th>
-            <th>Authors</th>
         </tr>
 
             {% for article in articles %}
 
             <tr>
-                <td><a href="{% url 'article_details' %}">{{ article.pm_id }}</a></td>
+                <td><a href="{% url 'article_details' article.id %}">{{ article.pm_id }}</a></td>
 {#                <td><a href="{% url 'tagpubDev:articleDetail' item.id %}">{{ item.id }}</a></td>#}
                 <td>{{ article.article_title }}</td>
                 <td>{{ article.journal_title }}</td>
                 <td>{{ article.publication_date }}</td>
-                <td>{{ article.authors }}</td>
 
             </tr>
 

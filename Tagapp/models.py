@@ -17,30 +17,46 @@ class Author(models.Model):
     # def __str__(self):
     #     return self.ForeName + ' ' + self.LastName
 
-    full_name = models.CharField(max_length=50, default='')
+    full_name = models.TextField(default='')
 
     def __str__(self):
         return self.full_name
 
 
 class RelatedKeywords(models.Model):
-    related_keywords = models.CharField(max_length=300,  null=True)
+    related_keywords = models.TextField(null=True)
 
     def __str__(self):
         return self.related_keywords or ''
 
 
+class Tag(models.Model):
+    name = models.TextField()
+    wiki_id = models.TextField(null=True)
+    description = models.TextField(null=True)
+    search_vector = SearchVectorField(null=True)
+    aliases = models.TextField(null=True)
+
+    def vector(self, *args, ** kwargs):
+        self.search_vector = (
+            SearchVector('name', weight='A')
+            + SearchVector('description', weight='B')
+            + SearchVector('aliases', weight='C')
+                            )
+        super().save(*args, **kwargs)
+
+
 class Article(models.Model):
-    pm_id = models.CharField(max_length=16)
-    journal_title = models.CharField(max_length=255)
-    article_title = models.TextField(max_length=511)
+    pm_id = models.TextField()
+    journal_title = models.TextField(null=True)
+    article_title = models.TextField(null=True)
     authors = models.ManyToManyField(Author)
-    abstract = models.TextField(null=True, blank=True)
+    abstract = models.TextField(null=True)
     publication_date = models.DateField(null=True)
-    keyword = models.CharField(max_length=300, default='')
+    doi = models.TextField(null=True)
+    keyword = models.TextField(default='')
     related_keywords = models.ManyToManyField(RelatedKeywords)
-    # related_keywords = models.CharField(max_length=255, null=True)
-    tags = models.CharField(max_length=255, null=True)
+    tags = models.ManyToManyField(Tag)
     search_vector = SearchVectorField(null=True)
 
     def __str__(self):
@@ -54,22 +70,11 @@ class Article(models.Model):
                             )
         super().save(*args, **kwargs)
 
+    def get_object_or_404(self, pk):
+        pass
 
-class Tag(models.Model):
-    name = models.CharField(max_length=50)
-    wiki_id = models.CharField(max_length=64, null=True)
-    description = models.TextField(max_length=1000, null=True)
-    search_vector = SearchVectorField(null=True)
-    # wikidata_url = models.URLField(null=True)
-    aliases = models.TextField(max_length=1000, null=True)
 
-    def vector(self, *args, ** kwargs):
-        self.search_vector = (
-            SearchVector('name', weight='A')
-            + SearchVector('description', weight='B')
-            + SearchVector('aliases', weight='C')
-                            )
-        super().save(*args, **kwargs)
+
 
 
 
