@@ -5,12 +5,12 @@
     <form method="POST" action="/create_tag/">
                 {% csrf_token %}
                 <div class="form-group">
-                    <label for="title">Name your tag:</label>
+                    <label for="title">Enter a keyword to search Wikidata:</label>
                     <input type="text" name="title" class="form-control" id="title" value="{{ Tag.title }}" required>
                 </div>
                 <div class="form-group">
-                    <label for="memo">Description</label>
-                    <textarea name="description" rows="5" class="form-control" id="description" >{{ Tag.description }}</textarea>
+                    <label for="memo">Name your tag: </label>
+                    <input name="description" rows="5" class="form-control" id="description" >{{ Tag.description }}</input>
                 </div>
                 <div class="form-group form-check">
                     <input type="checkbox" name="important" class="form-check-input" id="important" {% if todo.important %}checked{% endif %}>
