@@ -5,9 +5,10 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
+from .forms import TagForm
+
 from .models import Article, Tag, Author, RelatedKeywords
 from django.db.models import Q
-from .forms import TagForm
 from django.contrib.postgres.search import SearchQuery
 from django.core.paginator import Paginator
 
@@ -67,28 +68,13 @@ def logout_user(request):
 
 @login_required
 def search(request):
-    # if request.method == 'POST':
-    #     article_as_dict = {}
-    #     articles = Article.objects.filter(article_title__icontains='searched')
-    #     for index, article in enumerate(articles):
-    #         article_as_dict[index] = {'title': article.article_title}
-    #     # print(article_as_dict)
-    #     return render(request, 'Tagapp/search_results.html', {'articles': article_as_dict})
-    # else:
-    #     return render(request, 'Tagapp/search.html', {})
-
     if request.method == "POST":
         searched = request.POST.get('searched')
         if searched:
-        # articles = Article.objects.filter(SearchQuery('article_title'))
-        # if searched:
-        # print(searched)
             articles = Article.objects.filter(Q(article_title__icontains=searched)).distinct()
         # print(len(articles))
 
             return render(request, 'tagapp/search_results.html', context={'articles': articles})
-
-        # return render(request, 'tagapp/search_results.html', {'searched': searched})
     else:
         return render(request, 'tagapp/search.html', {})
 
@@ -124,36 +110,49 @@ def article_details(request, pk):
         "abstract": article.abstract,
         "keywords": keywords,
         "doi": article.doi,
-        # "tags": tags
+        "tags": tags
     }
     return render(request, 'tagapp/article_details.html', context=article_dict)
 
 
-    # if request.method == 'GET':
-    #     query = request.GET.get('q')
-    #     searchbutton = request.GET.get('submit')
-    #     if query is not None:
-    #         lookups = Q(journal_title__icontains=query) | Q(article_title__icontains=query)
-    #
-    #         results = Article.objects.filter(lookups).distinct()
-    #
-    #         context = {'results': results,
-    #                    'searchbutton': searchbutton}
-    #
-    #         return render(request, 'tagapp/search.html', context)
-    #
-    #     else:
-    #         return render(request, 'tagapp/search.html')
+@login_required
+# def create_tag(request, pk):
+#     article = Article.objects.get(pk=pk)
+#     tags = Tag.objects.filter(article=article)
+#     if request.method == 'POST':
+#         form = TagForm(data=request.POST)
+#         query = request.POST.get('query')
+#         if query:
+#             suggestions = WikiData.wiki_suggest(query)
+#             print(suggestions)
+#             article.Tag.add(tags)
+#
+#     return render(request, 'tagapp/create_tag.html', {'form': TagForm})
 
 @login_required
 def create_tag(request):
+    form = TagForm()
+    if request.method == 'POST':
+        form = TagForm(request.POST)
     # if request.method == 'POST':
-        # if 'create_tag' in request.POST:
-        #     form = TagForm(data=request.POST)
-        #     if form.data['wiki_id']:
-        #         Article.Tag.add(newtag)
+    #     query = request.POST.get('query')
+    #     form = TagForm(data=request.POST)
+    #     if form.data['suggestions']:
+    #         choices = form.data['suggestions']
 
-    return render(request, 'tagapp/create_tag.html')
+    return render(request, 'tagapp/create_tag.html', {'form': form})
+    # if request.method == 'GET':
+    #     return render(request, 'tagapp/create_tag.html', {'form': TagForm()})
+    # else:
+    #     try:
+    #         form = TagForm(data=request.POST)
+    #         newtag = form.save(commit=False)
+    #         newtag.user = request.user
+    #         newtag.save()
+    #     except ValueError:
+    #         return render(request, 'tagapp/create_tag.html', {'form': TagForm(), 'error': "bad data passed in"})
+
+    # return redirect('article_details')
 
 
 @login_required
@@ -162,3 +161,7 @@ def delete_tag(request, pk):
     if request.method == 'POST':
         tag.delete()
         return redirect('article_details')
+
+
+def tag_list(request):
+    return render(request, 'tag_list.html')

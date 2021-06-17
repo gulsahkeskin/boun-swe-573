@@ -31,5 +31,6 @@ urlpatterns = [
     path('search_results/', views.search_results, name='search_results'),
     path('article_details/<int:pk>', views.article_details, name='article_details'),
     path('create_tag/', views.create_tag, name='create_tag'),
+    path('tag_list/', views.tag_list, name='tag_list'),
 
 ]

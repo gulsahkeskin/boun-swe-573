@@ -82,9 +82,32 @@ class WikiData:
 
         return ', '.join(alias_list)
 
+# term = WikiData('Q131755')
+# print(term.get_id())
+# print(term.get_label())
+# print(term.get_description())
+# print(term.get_details())
 
-term = WikiData('Q131755')
-print(term.get_id())
-print(term.get_label())
-print(term.get_description())
-print(term.get_details())
+# Suggest alternative Wikidata tags to choose
+# returns different list of options depending on the query
+    def wiki_suggest(query):
+        wikidata_list = requests.get('https://www.wikidata.org/w/api.php?action=wbsearchentities&search='
+                                     + query
+                                     + '&format=json&language=en&type=item&continue=0'
+                                     )
+
+        wikiJSON = wikidata_list.json()
+        query_results = []
+        subjects = wikiJSON.get('search')
+        if subjects:
+            for subject in subjects:
+                q_id = subject.get('id')
+                label = subject.get('label')
+                description = subject.get('description')
+                query_results.append(q_id + ": " + label + " - " + description)
+
+        return query_results
+
+
+# query = "bipolar disorder"
+# print(WikiData.wiki_suggest(query))
