@@ -1,0 +1,20 @@
+{% extends 'tagapp/base.html' %}
+
+{% block content %}
+
+<table class="table table-striped">
+        <tr>
+            <th>Name</th>
+            <th>ID</th>
+            <th>Label</th>
+        </tr>
+
+            {% for tag in tags %}
+
+            <tr>
+                <td><a href="{% url 'tag_list' tags.id %}">{{ tag.id }}</a></td>
+                <td>{{ wiki_id }}</td>
+
+            {% endfor %}
+
+{% endblock %}
