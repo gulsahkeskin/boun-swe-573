@@ -158,32 +158,6 @@ class EntrezSearchRequest:
             return datetime.strptime(date_deneme, '%Y')
         else:
             return None
-            # try:
-            #     year = date_obj.get("Year")
-            #     month = date_obj.get("Month")
-            #     day = date_obj.get("Day")
-            #     date = year + "-" + month + "-" + day
-            #     date = date.strip()
-            #     date = datetime.strptime(year.string + '-' + month.string + '-' + day.string, '%Y-%m-%d')
-            #     return date
-            # except:
-            #     print("Could not parse date, PMID: ", pmid)
-            #     self.error_log.write("Date error: " + pmid)
-
-    # def getKeywords(self):
-    #     keywords_info = self.article_list.get("MedlineCitation").get("KeywordList")
-    #     keywords_list = []
-    #     if keywords_info:
-    #         for keyword in keywords_info.get('Keyword'):
-    #             if type(keyword) is str:
-    #                 keywords_list.append(keyword)
-    #             elif keyword.get('#text'):
-    #                 keywords_list.append(keyword.get('#text'))
-    #             else:
-    #                 pass
-    #         else:
-    #             keywords_list = None
-    #         return keywords_list
 
     def parse_doi(self, doi_obj, pmid):
         doi = ""
@@ -218,15 +192,6 @@ class EntrezSearchRequest:
             abstract = paper["MedlineCitation"]["Article"].get("Abstract", "")
             abstract_text = self.parse_article_abstract(abstract, pm_id)
 
-            # keywords_info = paper["MedlineCitation"].get("KeywordList", {}).get("Keyword")
-            # keywords = []
-            # if keywords_info:
-            #     for item in paper:
-            #         if EntrezSearchRequest.getKeywords(self):
-            #             for element in EntrezSearchRequest.getKeywords():
-            #                 keyword = RelatedKeywords.get_or_create(related_keywords=element)
-            #                 keywords.append(keyword[0])
-
             doi = paper.get("MedlineCitation").get("Article").get("ELocationID")
             doi = self.parse_doi(doi, pm_id)
 
@@ -256,21 +221,6 @@ class EntrezSearchRequest:
                                     "Keyword": self.keyword,
                                     "Related Keywords": keywords
                                     }
-
-    # def getKeywords(self):
-    #     keywords_info = self.article_list.get("MedlineCitation").get("KeywordList")
-    #     keywords_list = []
-    #     if keywords_info:
-    #         for keyword in keywords_info.get('Keyword'):
-    #             if type(keyword) is str:
-    #                 keywords_list.append(keyword)
-    #             elif keyword.get('#text'):
-    #                 keywords_list.append(keyword.get('#text'))
-    #             else:
-    #                 pass
-    #         else:
-    #             keywords_list = None
-    #         return keywords_list
 
     def pipeline(self, begin=0):
         self.get_article_ids()

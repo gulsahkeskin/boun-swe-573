@@ -109,6 +109,7 @@ def article_details(request, pk):
         "date": article.publication_date,
         "abstract": article.abstract,
         "keywords": keywords,
+        "pmid": article.pm_id,
         "doi": article.doi,
         "tags": tags
     }

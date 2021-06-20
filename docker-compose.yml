@@ -6,10 +6,12 @@ services:
     image: postgres
     volumes:
       - ./data/db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     environment:
       - POSTGRES_DB=projectpostgres
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=str(os.getenv('PASSWORD'))
+      - POSTGRES_PASSWORD=postgres
 
   web:
     build: .
@@ -21,3 +23,4 @@ services:
       - db
     command: python manage.py runserver 0.0.0.0:8000
 
+# burada önce makemigrations ve migrate gelmeli

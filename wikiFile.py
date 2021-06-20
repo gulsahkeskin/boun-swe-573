@@ -2,26 +2,6 @@ import requests
 import json
 
 
-# https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q131755
-# tag = requests.get("https://www.wikidata.org/w/api.php",
-#                    params={"action": "wbgetentities",
-#                            "ids": "Q131755",
-#                            "languages": "en",
-#                            "format": "json"}
-#                    )
-
-# print(tag)
-
-# file = (tag.json())
-
-
-# print(file)
-
-# entity_list = tag.json().get('entities')
-# print(entity_list)
-# wiki_page = tag.json().get('entities').get('Q131755')
-
-
 class WikiData:
     def __init__(self, wikiQid):
         tag = requests.get("https://www.wikidata.org/w/api.php?action=wbgetentities&ids=" +
@@ -82,11 +62,13 @@ class WikiData:
 
         return ', '.join(alias_list)
 
+
 # term = WikiData('Q131755')
 # print(term.get_id())
 # print(term.get_label())
 # print(term.get_description())
 # print(term.get_details())
+
 
 # Suggest alternative Wikidata tags to choose
 # returns different list of options depending on the query
@@ -107,7 +89,6 @@ class WikiData:
                 query_results.append(q_id + ": " + label + " - " + description)
 
         return query_results
-
 
 # query = "bipolar disorder"
 # print(WikiData.wiki_suggest(query))
